@@ -2,3 +2,4 @@ pandas==1.2
 yfinance
 seaborn
 matplotlib
+statsmodels==0.13.2
