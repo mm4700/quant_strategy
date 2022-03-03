@@ -2,7 +2,7 @@ import seaborn as sn
 from matplotlib.pyplot import figure
 import matplotlib.pyplot as plt
 
-from cointegration.calculations import calculate_rolling_avgs
+from utils.calculations import calculate_rolling_avgs
 
 
 def plot_corr_heatmap(corr_matrix):
