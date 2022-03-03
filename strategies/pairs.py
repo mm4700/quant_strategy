@@ -13,9 +13,11 @@ from data_analysis.data_visualization import plot_equity_return_curves, plot_pri
     plot_corr_heatmap, plot_equity_return_curves_w_market
 
 
-def research_stock_pairs(d, s1_symbol, s2_symbol):
+def research_stock_pairs(d, s1_symbol, s2_symbol, start, end):
     # get the correlation matrix
     corr_matrix = d.corr()
+
+    d['market'] = pdr.get_data_yahoo('^GSPC', start, end)['Adj Close']
 
     # plot hearmap for corr matrix
     plot_corr_heatmap(corr_matrix)
@@ -206,6 +208,7 @@ def rolling_avg_w_stop_loss(tickers, window, KPSS_max, unbiased, beta_loading, e
                 signal = 0
             else:
                 signal = np.sign(raw_data[tickers[1]][t] - (a_opt + b_opt * raw_data[tickers[0]][t]))
+
         # calculate strategy returns with beta loading
         if beta_loading == 1:
             rets0 = np.array(raw_data[tickers[0]][t - window:t - 1]) / np.array(
@@ -241,6 +244,7 @@ def rolling_avg_w_stop_loss(tickers, window, KPSS_max, unbiased, beta_loading, e
         gross_returns = np.append(gross_returns, gross)
         net_returns = np.append(net_returns, net)
         market_returns = np.append(market_returns, market)
+
     # building the output dataframe
     output = pd.DataFrame()
     output['KPSS'] = KPSS_stats
@@ -248,6 +252,8 @@ def rolling_avg_w_stop_loss(tickers, window, KPSS_max, unbiased, beta_loading, e
     output['gross'] = gross_returns
     output['net'] = net_returns
     output['market'] = market_returns
+
+    output.to_csv(f'results/output_{tickers[0]}_{tickers[1]}', sep='\t')
 
     # visualising the results
     plot_equity_return_curves(re=np.append(1, np.cumprod(1 + gross_returns)), s1_symbol=tickers[0], s2_symbol=tickers[1],
@@ -259,9 +265,3 @@ def rolling_avg_w_stop_loss(tickers, window, KPSS_max, unbiased, beta_loading, e
 
     plot_equity_return_curves_w_market(re=np.append(1, np.cumprod(1 + gross_returns)), re_m=np.append(1, np.cumprod(1 + market_returns)), s1_symbol=tickers[0], s2_symbol=tickers[1],
                               name='rolling avg gross return with market')
-
-    stock1 = raw_data[tickers[0]]
-    stock2 = raw_data[tickers[1]]
-    market = raw_data['market']
-    research_stock_pairs(raw_data, tickers[0], tickers[1])
-

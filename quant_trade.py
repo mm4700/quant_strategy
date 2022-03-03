@@ -34,7 +34,7 @@ def test_pairs_rolling_avg_stp_loss():
     # specifying the KPSS test (one-parameter unbiased or two-parameter)
     unbiased = 1
     # specifying whether to perform beta-loading or not
-    beta_loading = 0
+    beta_loading = 1
     # strategy parameters - trading fee, optimal entry (divergence), and stop-loss
     fee = 0.0001
     entry = 0.02
@@ -44,7 +44,8 @@ def test_pairs_rolling_avg_stp_loss():
     end = datetime(2022, 3, 1)
     # specifying the pair
     tickers = ['PEP', 'KO']
-
+    data = get_historical_Data(tickers=tickers, start_date=start, end_date=end)
+    #research_stock_pairs(data, tickers[0], tickers[1], start, end)
     rolling_avg_w_stop_loss(tickers, window, KPSS_max, unbiased, beta_loading, entry, stop_loss, start, end, fee)
 
 
