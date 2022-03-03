@@ -2,7 +2,7 @@ import seaborn as sn
 from matplotlib.pyplot import figure
 import matplotlib.pyplot as plt
 
-from calculations import calculate_rolling_avgs
+from cointegration.calculations import calculate_rolling_avgs
 
 
 def plot_corr_heatmap(corr_matrix):
@@ -20,6 +20,15 @@ def plot_stock_relation_line(s1, s2, s1_symbol, s2_symbol):
     plt.savefig('plots/stock_relation' + '_' + s1_symbol + '_' + s2_symbol + '.png')
 
 
+def plot_spread_timeseries(s1, s2, s1_symbol, s2_symbol):
+    # plot the spread
+    figure(figsize=(8, 6), dpi=200)
+    plt.plot(s1 - s2, label=f'Spread ({s1_symbol} - {s2_symbol})')
+    plt.legend()
+    plt.title(f"Spread between {s1_symbol} and {s2_symbol}")
+    plt.savefig('plots/spread' + '_' + s1_symbol + '_' + s2_symbol + '.png')
+
+
 def plot_price_ratio_timeseries(s1, s2, s1_symbol, s2_symbol):
     figure(figsize=(8, 6), dpi=200)
     ratio = s1 / s2
@@ -32,7 +41,7 @@ def plot_price_ratio_timeseries(s1, s2, s1_symbol, s2_symbol):
 
 def plot_z_score_std(r_s, s1_symbol, s2_symbol):
     # NOTE, here you can either use the spread OR the Price ratio approach. Anyways, let's standardize the ratio so we can have a
-    # upper and lower bound to help evaluate our trends.. Let's stick with the ratio data.
+    # upper and lower bound to help evaluate our trends.. Let's stick with the ratio data_analysis.
     figure(figsize=(8, 6), dpi=200)
     # Calculate the Zscores of each row.
     df_zscore = (r_s - r_s.mean()) / r_s.std()
@@ -40,9 +49,9 @@ def plot_z_score_std(r_s, s1_symbol, s2_symbol):
     plt.axhline(df_zscore.mean(), color='black')
     plt.axhline(1.0,
                 color='red')  # Setting the upper and lower bounds to be the z score of 1 and -1 (1/-1 standard deviation)
-    plt.axhline(1.25, color='red')  # 95% of our data will lie between these bounds.
-    plt.axhline(-1.0, color='green')  # 68% of our data will lie between these bounds.
-    plt.axhline(-1.25, color='green')  # 95% of our data will lie between these bounds.
+    plt.axhline(1.25, color='red')  # 95% of our data_analysis will lie between these bounds.
+    plt.axhline(-1.0, color='green')  # 68% of our data_analysis will lie between these bounds.
+    plt.axhline(-1.25, color='green')  # 95% of our data_analysis will lie between these bounds.
     plt.legend(loc='best')
     plt.title(f'Z score of Ratio of {s1_symbol} to {s2_symbol}')
     plt.savefig('plots/z_score' + '_' + s1_symbol + '_' + s2_symbol + '.png')

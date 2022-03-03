@@ -19,7 +19,7 @@ def cointegration_test(cointegration):
 
 
 def adfuller_test(s1, s2, s1_symbol, s2_symbol):
-    # With all time series, you want to have stationary data otherwise our data will be very hard to predict.
+    # With all time series, you want to have stationary data_analysis otherwise our data_analysis will be very hard to predict.
     stock1 = adfuller(s1)
     print(f'P value for the {s1_symbol} Augmented Dickey-Fuller Test is', stock1[1])
     stock2 = adfuller(s2)
