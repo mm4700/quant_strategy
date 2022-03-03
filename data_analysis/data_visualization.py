@@ -38,6 +38,16 @@ def plot_equity_return_curves(re, s1_symbol, s2_symbol, name, strategy="Pairs"):
     plt.savefig(f'results/equity {name}' + '_' + s1_symbol + '_' + s2_symbol + '_' + strategy + '.png')
 
 
+def plot_equity_return_curves_w_market(re, re_m, s1_symbol, s2_symbol, name, strategy="Pairs"):
+    # plot the spread
+    figure(figsize=(8, 6), dpi=200)
+    plt.plot(re, label=f'({s1_symbol} - {s2_symbol}) return')
+    plt.plot(re_m, label='market gross return', color='green')
+    plt.legend()
+    plt.title(f"equity {name} on {strategy} between {s1_symbol} and {s2_symbol}")
+    plt.savefig(f'results/equity {name}' + '_' + s1_symbol + '_' + s2_symbol + '_' + strategy + '.png')
+
+
 def plot_price_ratio_timeseries(s1, s2, s1_symbol, s2_symbol):
     figure(figsize=(8, 6), dpi=200)
     ratio = s1 / s2

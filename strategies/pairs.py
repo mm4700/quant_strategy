@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 from cointegration.cointegration_test import adfuller_test, cointegration_test, get_cointegration
 from data_analysis.data_visualization import plot_equity_return_curves, plot_price_ratio_timeseries, \
     plot_spread_timeseries, plot_z_score_std, plot_ratio_rolling_avg, plot_buy_sell_signal, plot_stock_relation_line, \
-    plot_corr_heatmap
+    plot_corr_heatmap, plot_equity_return_curves_w_market
 
 
 def research_stock_pairs(d, s1_symbol, s2_symbol):
@@ -123,29 +123,12 @@ def beta_netrual_back_test(stocks, start, end, fee, window, t_threshold):
                               name='net return')
 
 
-def rolling_avg():
-    # specifying rolling window length
-    window = 21
-    # specifying maximum KPSS statistic (95% critical value)
-    KPSS_max = 0.463
-    # specifying the KPSS test (one-parameter unbiased or two-parameter)
-    unbiased = 1
-    # specifying whether to perform beta-loading or not
-    beta_loading = 0
-    # strategy parameters - trading fee, optimal entry (divergence), and stop-loss
-    fee = 0.0001
-    entry = 0.02
-    stop_loss = -0.05
+def rolling_avg_w_stop_loss(tickers, window, KPSS_max, unbiased, beta_loading, entry, stop_loss, start, end, fee):
     # initially start in cash
     signal = 0
     current_return = 0
     position0 = 0
     position1 = 0
-    # specifying the sample
-    start = '2019-09-28'
-    end = '2021-09-28'
-    # specifying the pair
-    tickers = ['XOM', 'CVX']
     # specifying the market index
     market = '^GSPC'
     # initialising arrays
@@ -157,8 +140,9 @@ def rolling_avg():
     raw_data = pd.DataFrame()
     # downloading price data for stocks and the market index
     for ticker in tickers:
-        raw_data[ticker] = yf.download(ticker, start, end)['Close']
-    raw_data['market'] = yf.download(market, start, end)['Close']
+        raw_data[ticker] = pdr.get_data_yahoo(ticker, start, end)['Adj Close']
+
+    raw_data['market'] = pdr.get_data_yahoo(market, start, end)['Adj Close']
     # moving in a loop through the sample
     for t in range(window, len(raw_data) - 1):
         old_signal = signal
@@ -212,7 +196,7 @@ def rolling_avg():
             print('stop-loss triggered')
         # if we are already in position, check whether the equilibrium is restored, continue in position if not
         elif np.sign(raw_data[tickers[1]][t] - (a_opt + b_opt * raw_data[tickers[0]][t])) == old_signal:
-            singal = old_signal
+            signal = old_signal
         else:
             # only trade if the pair is cointegrated
             if KPSS_opt > KPSS_max:
@@ -264,7 +248,20 @@ def rolling_avg():
     output['gross'] = gross_returns
     output['net'] = net_returns
     output['market'] = market_returns
+
     # visualising the results
-    plt.plot(np.append(1, np.cumprod(1 + gross_returns)))
-    plt.plot(np.append(1, np.cumprod(1 + net_returns)))
-    plt.plot(np.append(1, np.cumprod(1 + market_returns)))
+    plot_equity_return_curves(re=np.append(1, np.cumprod(1 + gross_returns)), s1_symbol=tickers[0], s2_symbol=tickers[1],
+                              name='rolling avg gross return')
+    plot_equity_return_curves(re=np.append(1, np.cumprod(1 + net_returns)), s1_symbol=tickers[0], s2_symbol=tickers[1],
+                              name='rolling avg net return')
+    plot_equity_return_curves(re=np.append(1, np.cumprod(1 + market_returns)), s1_symbol=tickers[0], s2_symbol=tickers[1],
+                              name='rolling avg market return')
+
+    plot_equity_return_curves_w_market(re=np.append(1, np.cumprod(1 + gross_returns)), re_m=np.append(1, np.cumprod(1 + market_returns)), s1_symbol=tickers[0], s2_symbol=tickers[1],
+                              name='rolling avg gross return with market')
+
+    stock1 = raw_data[tickers[0]]
+    stock2 = raw_data[tickers[1]]
+    market = raw_data['market']
+    research_stock_pairs(raw_data, tickers[0], tickers[1])
+
