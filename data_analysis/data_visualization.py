@@ -34,7 +34,7 @@ def plot_equity_return_curves(re, s1_symbol, s2_symbol, name, strategy="Pairs"):
     figure(figsize=(8, 6), dpi=200)
     plt.plot(re, label=f'equity {name} on {strategy} for {s1_symbol} - {s2_symbol})')
     plt.legend()
-    plt.title(f"Spread between {s1_symbol} and {s2_symbol}")
+    plt.title(f"equity {name} on {strategy} between {s1_symbol} and {s2_symbol}")
     plt.savefig(f'results/equity {name}' + '_' + s1_symbol + '_' + s2_symbol + '_' + strategy + '.png')
 
 

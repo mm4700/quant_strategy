@@ -17,9 +17,9 @@ def portfolio_optimization(dt, ticks):
 
 
 def test_pairs():
-    stocks = ['JPM', 'C']
+    stocks = ['BRK-B', 'MSFT']
     start = datetime(2019, 3, 1)
-    end = datetime(2021, 12, 31)
+    end = datetime(2021, 3, 1)
     fee = 0.001
     window = 252
     t_threshold = -2.5
