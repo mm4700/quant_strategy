@@ -1,9 +1,6 @@
 # quant_strategy
 <div id="top"></div>
 
-
-<h3 align="center">quant_strategy</h3>
-
   <p align="center">
     Statistical Arbitrage Strategy |
     Backtesting |
@@ -12,10 +9,6 @@
    </p>
     
    <a href="https://github.com/mm4700/quant_strategy/results">View Research/Backtesing Results</a>
-
-
-<!-- ABOUT THE PROJECT -->
-## About The Project
 
 
 <!-- GETTING STARTED -->
