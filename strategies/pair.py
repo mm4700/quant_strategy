@@ -1,28 +1,69 @@
+from datetime import datetime
+
 import numpy as np
 import pandas as pd
-import yfinance as yf
+import pandas_datareader as pdr
 import statsmodels.api as sm
 import scipy.optimize as spop
 import matplotlib.pyplot as plt
 
+from cointegration.cointegration_test import adfuller_test, cointegration_test, get_cointegration
+from data_analysis.data_visualization import plot_equity_return_curves, plot_price_ratio_timeseries, \
+    plot_spread_timeseries, plot_z_score_std, plot_ratio_rolling_avg, plot_buy_sell_signal, plot_stock_relation_line, \
+    plot_corr_heatmap
 
-def beta_netrual():
-    global window, data, stock1, stock2, t
+
+def research_stock_pairs(d, s1_symbol, s2_symbol):
+    # get the correlation matrix
+    corr_matrix = d.corr()
+
+    # plot hearmap for corr matrix
+    plot_corr_heatmap(corr_matrix)
+
+    # plot the relationship between 2 stocks
+    d1 = d[s1_symbol]
+    d2 = d[s2_symbol]
+    ratio = d1 / d2
+    plot_stock_relation_line(d1, d2, s1_symbol, s2_symbol)
+
+    # Check out the cointegration value: Null hyp. = no cointegration
+    cointegration = get_cointegration(d1, d2)
+    cointegration_test(cointegration)
+
+    # Compute the ADF test for 2 stocks picked
+    adfuller_test(d1, d2, s1_symbol, s2_symbol)
+
+    # plot stock price ratio
+    plot_price_ratio_timeseries(d1, d2, s1_symbol, s2_symbol)
+
+    # plot spread
+    plot_spread_timeseries(d1, d2, s1_symbol, s2_symbol)
+
+    # plot z-score for price ratio
+    plot_z_score_std(ratio, s1_symbol, s2_symbol)
+    train = ratio[0:round(0.8 * len(ratio))]
+    test = ratio[round(0.8 * len(ratio)):]
+    print('Test : Do the splits check out?', len(train) + len(test) == len(ratio))
+
+    # plot rolling avg price ratio
+    plot_ratio_rolling_avg(ratio, s1_symbol, s2_symbol)
+
+    # plot buy sell signal
+    plot_buy_sell_signal(ratio, s1_symbol, s2_symbol)
+
+
+def beta_netrual_back_test(stocks, start, end, fee, window, t_threshold):
     # specifying parameters
-    stocks = ['JPM', 'C']
-    start = '2019-12-31'
-    end = '2021-03-08'
-    fee = 0.001
-    window = 252
-    t_threshold = -2.5
+    stock1 = stocks[0]
+    stock2 = stocks[1]
+
     # retrieving data
-    data = pd.DataFrame()
-    returns = pd.DataFrame()
-    for stock in stocks:
-        prices = yf.download(stock, start, end)
-        data[stock] = prices['Close']
-        returns[stock] = np.append(data[stock][1:].reset_index(drop=True) / data[stock][:-1].reset_index(drop=True) - 1,
-                                   0)
+    prices = pdr.get_data_yahoo(symbols=stocks, start=start, end=end)['Adj Close']
+
+    returns = prices.pct_change().dropna().reset_index(drop=True)
+
+    # padded last date with 0 value
+    returns.loc[len(returns)] = 0
     # initialising arrays
     gross_returns = np.array([])
     net_returns = np.array([])
@@ -30,31 +71,31 @@ def beta_netrual():
     stock1 = stocks[0]
     stock2 = stocks[1]
     # moving through the sample
-    for t in range(window, len(data)):
+    for t in range(window, len(prices)):
         # defining the unit root function: stock2 = a + b*stock1
         def unit_root(b):
-            a = np.average(data[stock2][t - window:t] - b * data[stock1][t - window:t])
-            fair_value = a + b * data[stock1][t - window:t]
-            diff = np.array(fair_value - data[stock2][t - window:t])
+            a = np.average(prices[stock2][t - window:t] - b * prices[stock1][t - window:t])
+            fair_value = a + b * prices[stock1][t - window:t]
+            diff = np.array(fair_value - prices[stock2][t - window:t])
             diff_diff = diff[1:] - diff[:-1]
             reg = sm.OLS(diff_diff, diff[:-1])
             res = reg.fit()
             return res.params[0] / res.bse[0]
 
         # optimising the cointegration equation parameters
-        res1 = spop.minimize(unit_root, data[stock2][t] / data[stock1][t], method='Nelder-Mead')
+        res1 = spop.minimize(unit_root, prices[stock2][t] / prices[stock1][t], method='Nelder-Mead')
         t_opt = res1.fun
         b_opt = float(res1.x)
-        a_opt = np.average(data[stock2][t - window:t] - b_opt * data[stock1][t - window:t])
+        a_opt = np.average(prices[stock2][t - window:t] - b_opt * prices[stock1][t - window:t])
         # simulating trading
-        fair_value = a_opt + b_opt * data[stock1][t]
+        fair_value = a_opt + b_opt * prices[stock1][t]
         if t == window:
             old_signal = 0
         if t_opt > t_threshold:
             signal = 0
             gross_return = 0
         else:
-            signal = np.sign(fair_value - data[stock2][t])
+            signal = np.sign(fair_value - prices[stock2][t])
             gross_return = signal * returns[stock2][t] - signal * returns[stock1][t]
         fees = fee * abs(signal - old_signal)
         net_return = gross_return - fees
@@ -62,7 +103,7 @@ def beta_netrual():
         net_returns = np.append(net_returns, net_return)
         t_s = np.append(t_s, t_opt)
         # interface: reporting daily positions and realised returns
-        print('day ' + str(data.index[t]))
+        print('day ' + str(prices.index[t]))
         print('')
         if signal == 0:
             print('no trading')
@@ -76,8 +117,10 @@ def beta_netrual():
         print('')
         old_signal = signal
     # plotting equity curves
-    plt.plot(np.append(1, np.cumprod(1 + gross_returns)))
-    plt.plot(np.append(1, np.cumprod(1 + net_returns)))
+    plot_equity_return_curves(re=np.append(1, np.cumprod(1 + gross_returns)), s1_symbol=stock1, s2_symbol=stock2,
+                              name='gross return')
+    plot_equity_return_curves(re=np.append(1, np.cumprod(1 + net_returns)), s1_symbol=stock1, s2_symbol=stock2,
+                              name='net return')
 
 
 def rolling_avg():
@@ -201,7 +244,7 @@ def rolling_avg():
             position1 = -signal
         # calculating returns
         gross = position0 * (raw_data[tickers[0]][t + 1] / raw_data[tickers[0]][t] - 1) + position1 * (
-                    raw_data[tickers[1]][t + 1] / raw_data[tickers[1]][t] - 1)
+                raw_data[tickers[1]][t + 1] / raw_data[tickers[1]][t] - 1)
         net = gross - fee * (abs(position0 - old_position0) + abs(position1 - old_position1))
         market = raw_data['market'][t + 1] / raw_data['market'][t] - 1
         if signal == old_signal:

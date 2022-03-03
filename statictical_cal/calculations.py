@@ -1,5 +1,7 @@
 import numpy as np
 import pandas as pd
+import statsmodels.api as sm
+
 
 def calculate_rolling_avgs(ratio):
     ratios_mavg5 = ratio.rolling(window=5, center=False).mean()
@@ -39,3 +41,18 @@ def art_avg_geo_avg(d, ticks):
     print("Expected Annual Returns ", expected_returns_aA)
     print("dar", dar)
     print("Full Annual Return", full_return_annual)
+
+
+# defining the unit root function: stock2 = a + b*stock1
+# unit root is a
+def unit_root(b, data, stock1, stock2, window, t):
+    a = np.average(data[stock2][t - window:t] - b * data[stock1][t - window:t])
+    fair_value = a + b * data[stock1][t - window:t]
+    diff = np.array(fair_value - data[stock2][t - window:t])
+    # diff[1:] all but first element , diff[:-1] all but last element
+    diff_diff = diff[1:] - diff[:-1]
+    # OLS - Ordinary linear square == linear regression
+    # Beta - coefficient
+    reg = sm.OLS(diff_diff, diff[:-1])
+    res = reg.fit()
+    return res.params[0] / res.bse[0]

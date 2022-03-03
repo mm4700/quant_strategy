@@ -16,6 +16,7 @@ def cointegration_test(cointegration):
     critical_value_test_statistic_at_1_5_10 = cointegration[2]
     print('We want the P val < 0.05 (meaning that cointegration exists)')
     print('P value for the augmented Engle-Granger two-step cointegration test is', p_val)
+    return cointegration_t_statistic, critical_value_test_statistic_at_1_5_10
 
 
 def adfuller_test(s1, s2, s1_symbol, s2_symbol):
@@ -32,3 +33,5 @@ def adfuller_test(s1, s2, s1_symbol, s2_symbol):
     # Spread looks fine. If you'd want even better results, consider taking the difference
     # Results: can only claim stationary for the spread (since P value < 0.05). This suggests a constant mean over time.
     # Therefore, the two series are cointegrated.
+
+    return Spread_ADF, Ratio_ADF
