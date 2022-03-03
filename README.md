@@ -41,7 +41,7 @@ To get a local copy up and running follow these simple example steps.
 
 <!-- USAGE EXAMPLES -->
 ## Usage
- This project is written to do the equity research and backtesting quant strtegies.
+ This project is written to do the equity research and backtesting quant strategies.
 _For more examples, please refer to the [Documentation](https://www.econstor.eu/bitstream/10419/116783/1/833997289.pdf)_
 
 <p align="right">(<a href="#top">back to top</a>)</p>
