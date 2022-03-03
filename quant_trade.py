@@ -48,6 +48,12 @@ def research_stock_pairs(d, s1_symbol, s2_symbol):
     plot_buy_sell_signal(ratio, s1_symbol, s2_symbol)
 
 
+def portfolio_optimization(dt, ticks):
+    df = get_portfolio_simulation(d=dt, ticks=ticks)
+    # plot efficient frontier from simulation
+    plot_efficient_frontier(df)
+    get_risk_adjusted_result(df)
+
 
 if __name__ == '__main__':
     ticks = ["DPZ", "AAPL", "GOOG", "AMD", "GME", "SPY", "NFLX", "BA", "WMT", "TWTR", "GS", "XOM", "NKE", "FB",
@@ -65,10 +71,5 @@ if __name__ == '__main__':
     # researching the relationship between stock pairs
     research_stock_pairs(dt, s1_symbol, s2_symbol)
 
-    df = get_portfolio_simulation(d=dt, ticks=ticks)
-
-    # plot efficient frontier from simulation
-    plot_efficient_frontier(df)
-
-    get_risk_adjusted_result(df)
+    portfolio_optimization(dt, ticks)
 

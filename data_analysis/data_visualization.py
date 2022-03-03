@@ -8,7 +8,7 @@ from utils.calculations import calculate_rolling_avgs
 def plot_corr_heatmap(corr_matrix):
     figure(figsize=(8, 6), dpi=200)
     sn_plot = sn.heatmap(corr_matrix, annot=True)
-    sn_plot.get_figure().savefig('plots/corr_heatmap.png')
+    sn_plot.get_figure().savefig('results/corr_heatmap.png')
 
 
 def plot_stock_relation_line(s1, s2, s1_symbol, s2_symbol):
@@ -17,7 +17,7 @@ def plot_stock_relation_line(s1, s2, s1_symbol, s2_symbol):
     plt.plot(s2, label=s2_symbol)
     plt.title('Historical Adjusted Closing Prices')
     plt.legend()
-    plt.savefig('plots/stock_relation' + '_' + s1_symbol + '_' + s2_symbol + '.png')
+    plt.savefig('results/stock_relation' + '_' + s1_symbol + '_' + s2_symbol + '.png')
 
 
 def plot_spread_timeseries(s1, s2, s1_symbol, s2_symbol):
@@ -26,7 +26,7 @@ def plot_spread_timeseries(s1, s2, s1_symbol, s2_symbol):
     plt.plot(s1 - s2, label=f'Spread ({s1_symbol} - {s2_symbol})')
     plt.legend()
     plt.title(f"Spread between {s1_symbol} and {s2_symbol}")
-    plt.savefig('plots/spread' + '_' + s1_symbol + '_' + s2_symbol + '.png')
+    plt.savefig('results/spread' + '_' + s1_symbol + '_' + s2_symbol + '.png')
 
 
 def plot_price_ratio_timeseries(s1, s2, s1_symbol, s2_symbol):
@@ -36,7 +36,7 @@ def plot_price_ratio_timeseries(s1, s2, s1_symbol, s2_symbol):
     plt.axhline(ratio.mean(), color='red')
     plt.legend()
     plt.title(f"Price Ratio between {s2_symbol} and {s2_symbol}")
-    plt.savefig('plots/price_ratio' + '_' + s1_symbol + '_' + s2_symbol + '.png')
+    plt.savefig('results/price_ratio' + '_' + s1_symbol + '_' + s2_symbol + '.png')
 
 
 def plot_z_score_std(r_s, s1_symbol, s2_symbol):
@@ -54,7 +54,7 @@ def plot_z_score_std(r_s, s1_symbol, s2_symbol):
     plt.axhline(-1.25, color='green')  # 95% of our data_analysis will lie between these bounds.
     plt.legend(loc='best')
     plt.title(f'Z score of Ratio of {s1_symbol} to {s2_symbol}')
-    plt.savefig('plots/z_score' + '_' + s1_symbol + '_' + s2_symbol + '.png')
+    plt.savefig('results/z_score' + '_' + s1_symbol + '_' + s2_symbol + '.png')
     # For the most part, the range that exists outside of these 'bands' must come converge back to the mean. Thus, you can
     # determine when you can go long or short the pair
 
@@ -68,7 +68,7 @@ def plot_ratio_rolling_avg(ratio, s1_symbol, s2_symbol):
     plt.legend(['Ratio', '5d Ratio MA', '20d Ratio MA'])
     plt.xlabel('Date')
     plt.ylabel('Ratio')
-    plt.savefig('plots/rolling_avg_' + '_' + s1_symbol + '_' + s2_symbol + '.png')
+    plt.savefig('results/rolling_avg_' + '_' + s1_symbol + '_' + s2_symbol + '.png')
     # plot rolling average z score
     plot_rolling_ratio_z_score(zscore_20_5, s1_symbol, s2_symbol)
 
@@ -82,7 +82,7 @@ def plot_rolling_ratio_z_score(z, s1_symbol, s2_symbol):
     plt.axhline(-1, color='green', linestyle='--')
     plt.axhline(-1.25, color='green', linestyle='--')
     plt.legend(['Rolling Ratio z-score', 'Mean', '+1', '+1.25', '-1', '-1.25'])
-    plt.savefig('plots/rolling_avg_z_score' + '_' + s1_symbol + '_' + s2_symbol + '.png')
+    plt.savefig('results/rolling_avg_z_score' + '_' + s1_symbol + '_' + s2_symbol + '.png')
 
 
 def plot_buy_sell_signal(ratio, s1_symbol, s2_symbol):
@@ -99,7 +99,7 @@ def plot_buy_sell_signal(ratio, s1_symbol, s2_symbol):
     plt.axis((x1, x2, ratio.min(), ratio.max()))
     plt.legend(['Ratio', 'Buy Signal', 'Sell Signal'])
     plt.title(f'Relationship {s1_symbol} to {s2_symbol}')
-    plt.savefig(f'plots/Buy Sell signal for {s1_symbol} to {s2_symbol}' + '.png')
+    plt.savefig(f'results/Buy Sell signal for {s1_symbol} to {s2_symbol}' + '.png')
 
 
 def plot_efficient_frontier(df):
@@ -120,4 +120,4 @@ def plot_efficient_frontier(df):
     plt.xlabel('Volatility (Std. Deviation)')
     plt.ylabel('Expected Returns')
     plt.title('Efficient Frontier')
-    plt.savefig(f'plots/efficient_frontier_simulation' + '.png')
+    plt.savefig(f'results/efficient_frontier_simulation' + '.png')
