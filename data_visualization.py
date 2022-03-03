@@ -91,3 +91,24 @@ def plot_buy_sell_signal(ratio, s1_symbol, s2_symbol):
     plt.legend(['Ratio', 'Buy Signal', 'Sell Signal'])
     plt.title(f'Relationship {s1_symbol} to {s2_symbol}')
     plt.savefig(f'plots/Buy Sell signal for {s1_symbol} to {s2_symbol}' + '.png')
+
+
+def plot_efficient_frontier(df):
+    # Finding the Optimal Portfolio
+    min_volatility = df['Volatility'].min()
+    max_sharpe = df['Sharpe Ratio'].max()
+
+    # use the min, max values to locate and create the two special portfolios
+    sharpe_portfolio = df.loc[df['Sharpe Ratio'] == max_sharpe]
+    min_variance_port = df.loc[df['Volatility'] == min_volatility]
+
+    # plot frontier, max sharpe & min Volatility values with a scatterplot
+    plt.style.use('fivethirtyeight')
+    df.plot.scatter(x='Volatility', y='Returns', c='Sharpe Ratio',
+                    cmap='RdYlGn', edgecolors='black', figsize=(10, 8), grid=True)
+    plt.scatter(x=sharpe_portfolio['Volatility'], y=sharpe_portfolio['Returns'], c='red', marker='D', s=200)
+    plt.scatter(x=min_variance_port['Volatility'], y=min_variance_port['Returns'], c='blue', marker='D', s=200)
+    plt.xlabel('Volatility (Std. Deviation)')
+    plt.ylabel('Expected Returns')
+    plt.title('Efficient Frontier')
+    plt.savefig(f'plots/efficient_frontier_simulation' + '.png')

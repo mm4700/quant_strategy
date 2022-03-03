@@ -1,34 +1,31 @@
 # The market is open 252 times in a given year.
-
+import numpy as np
 import pandas as pd
 from datetime import datetime
-import yfinance as yf
-
+import pandas_datareader as pdr
 from cointegration_test import get_cointegration, adfuller_test, cointegration_test
 from data_visualization import plot_buy_sell_signal, plot_ratio_rolling_avg, plot_z_score_std, \
-    plot_price_ratio_timeseries, plot_stock_relation_line, plot_corr_heatmap
+    plot_price_ratio_timeseries, plot_stock_relation_line, plot_corr_heatmap, plot_efficient_frontier
+
+from scipy import stats
+
+from monte_carlo_simulation import get_portfolio_simulation, get_risk_adjusted_result
 
 
 def get_historical_Data(tickers):
     """This function returns a pd dataframe with all of the adjusted closing information"""
-    data = pd.DataFrame()
-    names = list()
-    for i in tickers:
-        data = pd.concat(
-            [data, pd.DataFrame(yf.download(i, start=datetime(2020, 1, 1), end=datetime.today()).iloc[:, 4])], axis=1)
-        names.append(i)
-    data.columns = names
-    return data
+    data = pdr.get_data_yahoo(symbols=tickers, start=datetime(2015, 1, 1), end=datetime(2022, 3, 2))
+    # get most recent one year data
+    dT = data['Adj Close'].iloc[data['Adj Close'].shape[0] - 252:, :]
+    return dT, data['Adj Close']
 
 
-def research_stock_pairs():
+def research_stock_pairs(d, s1_symbol, s2_symbol):
     # get the correlation matrix
     corr_matrix = d.corr()
     # plot hearmap for corr matrix
     plot_corr_heatmap(corr_matrix)
     # plot the relationship between 2 stocks
-    s1_symbol = 'BRK-B'
-    s2_symbol = 'MSFT'
     d1 = d[s1_symbol]
     d2 = d[s2_symbol]
     ratio = d1 / d2
@@ -51,13 +48,24 @@ def research_stock_pairs():
     plot_buy_sell_signal(ratio, s1_symbol, s2_symbol)
 
 
+
 if __name__ == '__main__':
-    ticks = ["DPZ", "AAPL", "GOOG", "AMD", "GME", "SPY", "NFLX", "BA", "WMT", "TWTR", "GS", "XOM", "NKE", "FEYE", "FB",
+    ticks = ["DPZ", "AAPL", "GOOG", "AMD", "GME", "SPY", "NFLX", "BA", "WMT", "TWTR", "GS", "XOM", "NKE", "FB",
              "BRK-B", "MSFT"]
-    d = get_historical_Data(ticks)
+    dt, d = get_historical_Data(ticks)
     print(d.shape)
-    # Most Recent Data
-    d.tail()
+
+    # choose 2 ticks
+    s1_symbol = 'BRK-B'
+    s2_symbol = 'MSFT'
 
     # researching the relationship between stock pairs
-    research_stock_pairs()
+    research_stock_pairs(dt, s1_symbol, s2_symbol)
+
+    df = get_portfolio_simulation(d=dt, ticks=ticks)
+
+    # plot efficient frontier from simulation
+    #plot_efficient_frontier(df)
+
+    get_risk_adjusted_result(df)
+
