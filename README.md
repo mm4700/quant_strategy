@@ -106,12 +106,14 @@ Pick the stocks pairs with high correlation
 
 ### Conintegration test for PEP and KO
 #### Augmented Dickey-Fuller Test
+ ```sh
 We want the P val < 0.05 (meaning that cointegration exists)
 P value for the augmented Engle-Granger two-step cointegration test is 0.0007596845602489357
 P value for the PEP Augmented Dickey-Fuller Test is 0.1493608183193515
 P value for  the KO Augmented Dickey-Fuller Test is 0.4085723353458443
 P value for the spread Augmented Dickey-Fuller Test is 0.015259706229845139
 P value for the ratio PEP/KO  Augmented Dickey-Fuller Test is 0.004164047909450876
+ ```
 
 ### Mean reversion pair trading strategy simulation
 1) Find 2 assets that move similarly with eachother (whether it be a negative or positive correlation)
@@ -152,7 +154,7 @@ P value for the ratio PEP/KO  Augmented Dickey-Fuller Test is 0.0041640479094508
 ## Back Testing
 # Rolling avg with Stop loss and beta reloading strategy
 *based on following variables:
-  ```
+  ```sh
    # specifying rolling window length
     window = 21
     # specifying maximum KPSS statistic (95% critical value)
