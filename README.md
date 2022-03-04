@@ -36,13 +36,6 @@ To get a local copy up and running follow these simple example steps.
 ## Usage
  This project is written to do the equity research and backtesting quant strategies.
 </br>
-Statistical Arbitrage -- Pairs trading:
-</br>
-References:
-</br>
- [Documentation1](https://www.econstor.eu/bitstream/10419/116783/1/833997289.pdf)
-</br>
- [Documentation2](https://kidquant.com/project/pairs-trading-strategies-in-python/)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -230,3 +223,9 @@ Red dot: max risk adjusted return
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
+</br>
+References:
+</br>
+ [Documentation1](https://www.econstor.eu/bitstream/10419/116783/1/833997289.pdf)
+</br>
+ [Documentation2](https://kidquant.com/project/pairs-trading-strategies-in-python/)
