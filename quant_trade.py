@@ -50,21 +50,21 @@ def test_pairs_rolling_avg_stp_loss():
 
 
 if __name__ == '__main__':
-    # ticks = ["DPZ", "AAPL", "GOOG", "AMD", "GME", "SPY", "NFLX", "BA", "WMT", "TWTR", "GS", "XOM", "NKE", "FB",
-    #          "BRK-B", "MSFT"]
+    ticks = ["DPZ", "AAPL", "GOOG", "AMD", "GME", "SPY", "NFLX", "BA", "WMT", "TWTR", "GS", "XOM", "NKE", "FB",
+              "BRK-B", "MSFT", 'PEP', 'KO']
     #
-    # start = datetime(2015, 1, 1)
-    # end = datetime.today()
-    # dt, d = get_historical_Data(tickers=ticks, start_date=start, end_date=end)
+    start = datetime(2015, 1, 1)
+    end = datetime(2016, 1, 1)
+    dt, d = get_historical_Data(tickers=ticks, start_date=start, end_date=end)
     # print(d.shape)
     #
     # # choose 2 ticks
-    # s1_symbol = 'BRK-B'
-    # s2_symbol = 'MSFT'
+    s1_symbol = 'PEP'
+    s2_symbol = 'KO'
 
     # researching the relationship between stock pairs
-    #research_stock_pairs(dt, s1_symbol, s2_symbol)
+    research_stock_pairs(dt, s1_symbol, s2_symbol, start=start, end=end)
 
     # portfolio_optimization(dt, ticks)
 
-    test_pairs_rolling_avg_stp_loss()
+    #test_pairs_rolling_avg_stp_loss()

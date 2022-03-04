@@ -14,10 +14,10 @@ from data_analysis.data_visualization import plot_equity_return_curves, plot_pri
 
 
 def research_stock_pairs(d, s1_symbol, s2_symbol, start, end):
-    # get the correlation matrix
-    corr_matrix = d.corr()
 
     d['market'] = pdr.get_data_yahoo('^GSPC', start, end)['Adj Close']
+    # get the correlation matrix
+    corr_matrix = d.corr()
 
     # plot hearmap for corr matrix
     plot_corr_heatmap(corr_matrix)
@@ -253,7 +253,7 @@ def rolling_avg_w_stop_loss(tickers, window, KPSS_max, unbiased, beta_loading, e
     output['net'] = net_returns
     output['market'] = market_returns
 
-    output.to_csv(f'results/output_{tickers[0]}_{tickers[1]}', sep='\t')
+    output.to_csv(f'results/output_{tickers[0]}_{tickers[1]}.csv', sep='\t')
 
     # visualising the results
     plot_equity_return_curves(re=np.append(1, np.cumprod(1 + gross_returns)), s1_symbol=tickers[0], s2_symbol=tickers[1],
