@@ -8,7 +8,7 @@
     Research Data visualization 
    </p>
     
-   <a href="https://github.com/mm4700/quant_strategy/results">View Research/Backtesing Results</a>
+   <a href="https://github.com/mm4700/quant_strategy/tree/develop/results">View Research/Backtesing Results</a>
 
 
 <!-- GETTING STARTED -->
