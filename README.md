@@ -187,6 +187,11 @@ P value for the ratio PEP/KO  Augmented Dickey-Fuller Test is 0.0041640479094508
 ![equity rolling avg gross return with market_PEP_KO_Pairs](https://user-images.githubusercontent.com/14364394/156684414-6773aa77-fe21-4dbb-afb0-73381ba35f0b.png)
 
 
+4, KPSS and buy/sell signal daily:
+
+![image](https://user-images.githubusercontent.com/14364394/156685785-48963c3a-2c33-4781-a02f-e37eefdef7ca.png)
+
+<a href="https://github.com/mm4700/quant_strategy/tree/develop/results/PEP-KO_BETA_LOADING/output_PEP_KO.csv">View Daily Signal Results</a>
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
