@@ -152,7 +152,9 @@ P value for the ratio PEP/KO  Augmented Dickey-Fuller Test is 0.0041640479094508
 
 <!-- Back Testing-->
 ## Back Testing
-# Rolling avg with Stop loss and beta reloading strategy
+### Rolling avg with Stop loss and beta reloading strategy
+
+<a href="https://github.com/mm4700/quant_strategy/tree/develop/strategies">View Strategy Code</a>
 *based on following variables:
   ```sh
    # specifying rolling window length
@@ -196,5 +198,35 @@ P value for the ratio PEP/KO  Augmented Dickey-Fuller Test is 0.0041640479094508
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 
+<!-- Portfolio Simulation-->
+## Portfolio Simulation
+### Monte Carlo Simulation for sharpe ratio (efficient frontier)
 
+### Sharpe Ratio
+Measuring the Adjusted Risk of Return
+Measures the risk adjusted rate of return of a portfolio.
+
+<img width="287" alt="image" src="https://user-images.githubusercontent.com/14364394/156764688-d2b90181-90b9-42de-9263-00f8065db858.png">
+
+<img width="1066" alt="image" src="https://user-images.githubusercontent.com/14364394/156764754-ab2963c5-87bc-4d45-9a8e-5fe5e0de0a1c.png">
+
+1, Efficient frontier plot:
+
+Blue dot: min risk adjusted return
+Red dot: mas risk adjusted return
+
+<a href="https://github.com/mm4700/quant_strategy/blob/develop/simulation/monte_carlo_simulation_portfolio.py">View Simulation Code</a>
+
+![](results/tests/efficient_frontier_simulation.png)
+
+
+2, Risk Adjusted return result:
+
+[risk_adjusted_return.csv](https://github.com/mm4700/quant_strategy/files/8185937/risk_adjusted_return.csv)
+
+<img width="452" alt="image" src="https://user-images.githubusercontent.com/14364394/156766323-03aba85f-5833-44e2-816f-a2c9f6ca3cdc.png">
+
+
+
+<p align="right">(<a href="#top">back to top</a>)</p>
 
