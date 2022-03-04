@@ -212,8 +212,8 @@ Measures the risk adjusted rate of return of a portfolio.
 
 1, Efficient frontier plot:
 
-Blue dot: min risk adjusted return
-Red dot: mas risk adjusted return
+Blue dot: min risk adjusted return |
+Red dot: max risk adjusted return
 
 <a href="https://github.com/mm4700/quant_strategy/blob/develop/simulation/monte_carlo_simulation_portfolio.py">View Simulation Code</a>
 
