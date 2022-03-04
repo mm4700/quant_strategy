@@ -223,9 +223,9 @@ Red dot: max risk adjusted return
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
-</br>
+<!-- Reference-->
+## Reference
+
 References:
-</br>
  [Documentation1](https://www.econstor.eu/bitstream/10419/116783/1/833997289.pdf)
-</br>
  [Documentation2](https://kidquant.com/project/pairs-trading-strategies-in-python/)
