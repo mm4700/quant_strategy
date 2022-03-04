@@ -55,6 +55,9 @@ For more examples, please refer to the [Documentation](https://www.econstor.eu/b
 <!-- Research-->
 ## Research
 
+
+<p align="right">(<a href="#top">back to top</a>)</p>
+
 <!-- Backtesting-->
 ## Backtesting
 
