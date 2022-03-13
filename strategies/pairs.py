@@ -146,11 +146,14 @@ def rolling_avg_w_stop_loss(tickers, window, KPSS_max, unbiased, beta_loading, e
 
     raw_data['market'] = pdr.get_data_yahoo(market, start, end)['Adj Close']
     # moving in a loop through the sample
+    # range start with window to find the first starting point we are able to run the strategy
+    # range end with (len(raw_data) - 1 ) because in last day, we wont be able to know the return.
     for t in range(window, len(raw_data) - 1):
         old_signal = signal
         old_position0 = position0
         old_position1 = position1
         # specifying the subsample
+        # chop up our dataframe to a window
         data = raw_data[t - window:t]
         # stock 2 = a + b*stock 1
         # OLS parameters as starting values
@@ -158,6 +161,8 @@ def rolling_avg_w_stop_loss(tickers, window, KPSS_max, unbiased, beta_loading, e
         res = reg.fit()
         a0 = res.params[0]
         b0 = res.params[1]
+
+        # if unbiased == 1, then we could only verify parameter b , parameter a would be determined by default
         if unbiased == 1:
             # defining the KPSS function (unbiased one-parameter forecast)
             def KPSS(b):
@@ -168,14 +173,19 @@ def rolling_avg_w_stop_loss(tickers, window, KPSS_max, unbiased, beta_loading, e
                 KPSS = np.sum(cum_resid ** 2) / (len(resid) ** 2 * st_error ** 2)
                 return KPSS
 
+            # scipy optimize library
             # minimising the KPSS function (maximising the stationarity)
+            # we need the KPSS statistic to be as low as possible
             res = spop.minimize(KPSS, b0, method='Nelder-Mead')
+
+            # KPSS optimal value is the function value from the optimization result.
             KPSS_opt = res.fun
             # retrieving optimal parameters
             b_opt = float(res.x)
             a_opt = np.average(data[tickers[1]] - b_opt * data[tickers[0]])
         else:
             # defining the KPSS function (two-parameter)
+            # we could verify both parameter a and b .
             def KPSS2(kpss_params):
                 a = kpss_params[0]
                 b = kpss_params[1]
@@ -194,22 +204,35 @@ def rolling_avg_w_stop_loss(tickers, window, KPSS_max, unbiased, beta_loading, e
         # simulate trading
         # first check whether stop-loss is violated
         if current_return < stop_loss:
+            # we need to liquidate our positon and sit in cash
             signal = 0
             print('stop-loss triggered')
-        # if we are already in position, check whether the equilibrium is restored, continue in position if not
+
         elif np.sign(raw_data[tickers[1]][t] - (a_opt + b_opt * raw_data[tickers[0]][t])) == old_signal:
             signal = old_signal
+            '''
+            if we are already in position, check whether the equilibrium is restored, continue in position if not
+            if the dynamic equilibrium is not yet restored we dont want to change position
+            we could compare the sign (+/-) of the diff between current price with the dynamic equilibrium price 
+            with the old signal.
+            if the sign is maintained, we need to wait the dynamic equilibruim to cross back.
+            
+             '''
         else:
             # only trade if the pair is cointegrated
+
+            # if our KPSS_opt exceed the KPSS_max meaning thepair is not conintegrated, we should clear out positon.
             if KPSS_opt > KPSS_max:
                 signal = 0
             # only trade if there are large enough profit opportunities (optimal entry)
+            # we compare the current divergence with our entry (0.02)
             elif abs(raw_data[tickers[1]][t] / (a_opt + b_opt * raw_data[tickers[0]][t]) - 1) < entry:
                 signal = 0
             else:
                 signal = np.sign(raw_data[tickers[1]][t] - (a_opt + b_opt * raw_data[tickers[0]][t]))
 
         # calculate strategy returns with beta loading
+        # using signal * beta as the positon weight
         if beta_loading == 1:
             rets0 = np.array(raw_data[tickers[0]][t - window:t - 1]) / np.array(
                 raw_data[tickers[0]][t - window + 1:t]) - 1
